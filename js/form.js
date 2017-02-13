@@ -8,7 +8,6 @@ var uploadFormCancel = upload.querySelector('.upload-form-cancel');
 
 var imagePreview = upload.querySelector('.filter-image-preview');
 var filtersBlock = upload.querySelector('.upload-filter-controls');
-var filters = upload.querySelectorAll('[name=upload-filter]');
 
 var imageSizeDec = upload.querySelector('.upload-resize-controls-button-dec');
 var imageSizeInc = upload.querySelector('.upload-resize-controls-button-inc');
@@ -19,18 +18,18 @@ var ESCAPE_KEYCODE = 27;
 
 var isActivateEvent = function (event) {
   return event.keyCode && event.keyCode === ENTER_KEYCODE;
-}
+};
 
 var isHideEvent = function (event) {
   return event.keyCode && event.keyCode === ESCAPE_KEYCODE;
-}
+};
 
 var uploadOverlayHandler = function (event) {
-  if (isHideEvent(event)){
+  if (isHideEvent(event)) {
     hideElement(uploadOverlay);
     showElement(uploadSelectImage);
   }
-}
+};
 
 /* Созд. функции доб-я/удаления класса invisible*/
 function showElement(elem) {
@@ -46,29 +45,29 @@ var setupOverlayOpen = function () {
   hideElement(uploadSelectImage);
   document.addEventListener('keydown', uploadOverlayHandler);
   uploadOverlay.setAttribute('aria-hidden', false);
-}
+};
 
 var setupOverlayClose = function () {
   showElement(uploadSelectImage);
   hideElement(uploadOverlay);
   document.removeEventListener('keydown', uploadOverlayHandler);
   uploadOverlay.setAttribute('aria-hidden', true);
-}
+};
 
 /* show overlay form*/
 uploadFile.onchange = function () {
   setupOverlayOpen();
   uploadFile.value = '';
-}
+};
 
-/*close overlay form*/
+/* close overlay form*/
 uploadFormCancel.addEventListener('click', setupOverlayClose);
 
 uploadFormCancel.addEventListener('keypress', function (event) {
-  if (isActivateEvent(event)){
+  if (isActivateEvent(event)) {
     setupOverlayClose();
   }
-})
+});
 
 /* use filter*/
 function getFilterName(elem) {
@@ -79,16 +78,20 @@ function getFilterName(elem) {
 var getTargetInput = function (event) {
   var targetElem = event.target;
 
-  while (!targetElem.name && targetElem.name !== "upload-filter") {
-    !targetElem.previousElementSibling ? targetElem = targetElem.parentElement : targetElem = targetElem.previousSibling;
-  };
+  while (!targetElem.name && targetElem.name !== 'upload-filter') {
+    if (!targetElem.previousElementSibling) {
+      targetElem = targetElem.parentElement;
+    } else {
+      targetElem = targetElem.previousSibling;
+    }
+  }
 
   return targetElem;
-}
+};
 
 function applyFilter(event) {
   var newFilter = getFilterName(getTargetInput(event));
-  imagePreview.className = "filter-image-preview";
+  imagePreview.className = 'filter-image-preview';
   imagePreview.classList.add(newFilter);
 }
 
