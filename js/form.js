@@ -1,66 +1,55 @@
-'use strict'
+'use strict';
 
-var upload = document.querySelector('.upload');
-var uploadOverlay = upload.querySelector('.upload-overlay');
-var uploadSelectImage = upload.querySelector('#upload-select-image');
-var uploadFile = uploadSelectImage.querySelector('#upload-file');
-var uploadFormCancel = upload.querySelector('.upload-form-cancel');
+(function (exports) {
+  var upload = document.querySelector('.upload');
+  var uploadOverlay = upload.querySelector('.upload-overlay');
+  var uploadSelectImage = upload.querySelector('#upload-select-image');
+  var uploadFile = uploadSelectImage.querySelector('#upload-file');
+  var uploadFormCancel = upload.querySelector('.upload-form-cancel');
+  exports.imagePreview = upload.querySelector('.filter-image-preview');
 
-var filtersBlock = upload.querySelector('.upload-filter-controls');
+  var uploadOverlayHandler = function (event) {
+    if (window.keyCodeHandler.isHideEvent(event)) {
+      window.form.hideElement(uploadOverlay);
+      window.form.showElement(uploadSelectImage);
+    }
+  };
 
-var imageSizeDec = upload.querySelector('.upload-resize-controls-button-dec');
-var imageSizeInc = upload.querySelector('.upload-resize-controls-button-inc');
-var imageSizeValue = upload.querySelector('.upload-resize-controls-value');
+  var setupOverlayOpen = function () {
+    window.form.showElement(uploadOverlay);
+    window.form.hideElement(uploadSelectImage);
+    document.addEventListener('keydown', uploadOverlayHandler);
+    uploadOverlay.setAttribute('aria-hidden', false);
+  };
 
-var uploadOverlayHandler = function (event) {
-  if (keyCodeHandler.isHideEvent(event)) {
-    hideElement(uploadOverlay);
-    showElement(uploadSelectImage);
+  var setupOverlayClose = function () {
+    window.form.showElement(uploadSelectImage);
+    window.form.hideElement(uploadOverlay);
+    document.removeEventListener('keydown', uploadOverlayHandler);
+    uploadOverlay.setAttribute('aria-hidden', true);
+  };
+
+  /* show overlay form*/
+  uploadFile.addEventListener('change', function () {
+    setupOverlayOpen();
+    uploadFile.value = '';
+  });
+
+  /* close overlay form*/
+  uploadFormCancel.addEventListener('click', setupOverlayClose);
+
+  uploadFormCancel.addEventListener('keypress', function (event) {
+    if (window.keyCodeHandler.isActivateEvent(event)) {
+      setupOverlayClose();
+    }
+  });
+
+  /* Созд. функции доб-я/удаления класса invisible*/
+  exports.showElement = function(elem) {
+    elem.classList.remove('invisible');
   }
-};
 
-/* Созд. функции доб-я/удаления класса invisible*/
-function showElement(elem) {
-  elem.classList.remove('invisible');
-}
-
-function hideElement(elem) {
-  elem.classList.add('invisible');
-}
-
-var setupOverlayOpen = function () {
-  showElement(uploadOverlay);
-  hideElement(uploadSelectImage);
-  document.addEventListener('keydown', uploadOverlayHandler);
-  uploadOverlay.setAttribute('aria-hidden', false);
-};
-
-var setupOverlayClose = function () {
-  showElement(uploadSelectImage);
-  hideElement(uploadOverlay);
-  document.removeEventListener('keydown', uploadOverlayHandler);
-  uploadOverlay.setAttribute('aria-hidden', true);
-};
-
-/* show overlay form*/
-uploadFile.addEventListener('change', function () {
-  setupOverlayOpen();
-  uploadFile.value = '';
-});
-
-/* close overlay form*/
-uploadFormCancel.addEventListener('click', setupOverlayClose);
-
-uploadFormCancel.addEventListener('keypress', function (event) {
-  if (keyCodeHandler.isActivateEvent(event)) {
-    setupOverlayClose();
+  exports.hideElement = function(elem) {
+    elem.classList.add('invisible');
   }
-});
-
-/*use filters*/
-initializeFilters(filtersBlock);
-
-/* use scaling*/
-
-initializeScale(imageSizeInc, 25, imageSizeValue);
-initializeScale(imageSizeDec, 25, imageSizeValue);
+})(this.form = {})
