@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 var upload = document.querySelector('.upload');
 var uploadOverlay = upload.querySelector('.upload-overlay');
@@ -6,26 +6,14 @@ var uploadSelectImage = upload.querySelector('#upload-select-image');
 var uploadFile = uploadSelectImage.querySelector('#upload-file');
 var uploadFormCancel = upload.querySelector('.upload-form-cancel');
 
-var imagePreview = upload.querySelector('.filter-image-preview');
 var filtersBlock = upload.querySelector('.upload-filter-controls');
 
 var imageSizeDec = upload.querySelector('.upload-resize-controls-button-dec');
 var imageSizeInc = upload.querySelector('.upload-resize-controls-button-inc');
 var imageSizeValue = upload.querySelector('.upload-resize-controls-value');
 
-var ENTER_KEYCODE = 13;
-var ESCAPE_KEYCODE = 27;
-
-var isActivateEvent = function (event) {
-  return event.keyCode && event.keyCode === ENTER_KEYCODE;
-};
-
-var isHideEvent = function (event) {
-  return event.keyCode && event.keyCode === ESCAPE_KEYCODE;
-};
-
 var uploadOverlayHandler = function (event) {
-  if (isHideEvent(event)) {
+  if (keyCodeHandler.isHideEvent(event)) {
     hideElement(uploadOverlay);
     showElement(uploadSelectImage);
   }
@@ -55,75 +43,24 @@ var setupOverlayClose = function () {
 };
 
 /* show overlay form*/
-uploadFile.onchange = function () {
+uploadFile.addEventListener('change', function () {
   setupOverlayOpen();
   uploadFile.value = '';
-};
+});
 
 /* close overlay form*/
 uploadFormCancel.addEventListener('click', setupOverlayClose);
 
 uploadFormCancel.addEventListener('keypress', function (event) {
-  if (isActivateEvent(event)) {
+  if (keyCodeHandler.isActivateEvent(event)) {
     setupOverlayClose();
   }
 });
 
-/* use filter*/
-function getFilterName(elem) {
-  var filterName = elem.id.replace('upload-', '');
-  return filterName;
-}
-
-var getTargetInput = function (event) {
-  var targetElem = event.target;
-
-  while (!targetElem.name && targetElem.name !== 'upload-filter') {
-    if (!targetElem.previousElementSibling) {
-      targetElem = targetElem.parentElement;
-    } else {
-      targetElem = targetElem.previousSibling;
-    }
-  }
-
-  return targetElem;
-};
-
-function applyFilter(event) {
-  var newFilter = getFilterName(getTargetInput(event));
-  imagePreview.className = 'filter-image-preview';
-  imagePreview.classList.add(newFilter);
-}
-
-filtersBlock.addEventListener('click', function (event) {
-  applyFilter(event);
-});
-
-filtersBlock.addEventListener('keydown', function (event) {
-  if (isActivateEvent(event)) {
-    applyFilter(event);
-  }
-});
+/*use filters*/
+initializeFilters(filtersBlock);
 
 /* use scaling*/
-function getValue(elem) {
-  return +elem.value.substring(0, elem.value.indexOf('%'));
-}
 
-imageSizeInc.addEventListener('click', function () {
-  var value = getValue(imageSizeValue);
-  if (value < 100) {
-    value += 25;
-    imageSizeValue.value = value + '%';
-    imagePreview.style.transform = 'scale(' + value / 100 + ')';
-  }
-});
-
-imageSizeDec.addEventListener('click', function () {
-  var value = getValue(imageSizeValue);
-  if (value > 25) {
-    value -= 25;
-    imageSizeValue.value = value + '%';
-    imagePreview.style.transform = 'scale(' + value / 100 + ')';
-  }
-});
+initializeScale(imageSizeInc, 25, imageSizeValue);
+initializeScale(imageSizeDec, 25, imageSizeValue);
