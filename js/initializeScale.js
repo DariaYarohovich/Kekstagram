@@ -1,32 +1,41 @@
-var initializeScale = function (elem, step, currentValue) {
+'use strict';
 
-  var imagePreview = upload.querySelector('.filter-image-preview');
-
-  function getSizeValue(elem) {
-    return +elem.value.substring(0, elem.value.indexOf('%'));
-  }
+(function() {
+  var imageSizeDec = document.querySelector('.upload-resize-controls-button-dec');
+  var imageSizeInc = document.querySelector('.upload-resize-controls-button-inc');
+  var imageSizeValue = document.querySelector('.upload-resize-controls-value');
 
   function applySizeValue(value) {
     imageSizeValue.setAttribute('value', value);
     imageSizeValue.value = value + '%';
-    imagePreview.style.transform = 'scale(' + value / 100 + ')';
+    window.form.imagePreview.style.transform = 'scale(' + value / 100 + ')';
   }
 
-  function isActivateScaling() {
-    var currentSizeValue = getSizeValue(currentValue);
+  function  initializeScale(elem, step, currentValue) {
 
-    if (elem === imageSizeInc && currentSizeValue <= (100-step)) {
-      currentSizeValue += step;
-      applySizeValue(currentSizeValue);
+    function getSizeValue(elem) {
+      return +elem.value.substring(0, elem.value.indexOf('%'));
     }
 
-    if (elem === imageSizeDec && currentSizeValue > step) {
-      currentSizeValue -= step;
-      applySizeValue(currentSizeValue);
+    function isActivateScaling() {
+      var currentSizeValue = getSizeValue(currentValue);
+
+      if (elem === imageSizeInc && currentSizeValue <= (100-step)) {
+        currentSizeValue += step;
+        applySizeValue(currentSizeValue);
+      }
+
+      if (elem === imageSizeDec && currentSizeValue > step) {
+        currentSizeValue -= step;
+        applySizeValue(currentSizeValue);
+      }
     }
+
+    elem.addEventListener('click', function () {
+      isActivateScaling();
+    })
   }
 
-  elem.addEventListener('click', function () {
-    isActivateScaling();
-  })
-}
+  initializeScale(imageSizeInc, 25, imageSizeValue);
+  initializeScale(imageSizeDec, 25, imageSizeValue);
+})()
