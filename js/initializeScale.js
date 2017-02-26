@@ -1,6 +1,6 @@
 'use strict';
 
-(function() {
+(function(exports) {
   var imageSizeDec = document.querySelector('.upload-resize-controls-button-dec');
   var imageSizeInc = document.querySelector('.upload-resize-controls-button-inc');
   var imageSizeValue = document.querySelector('.upload-resize-controls-value');
@@ -11,7 +11,7 @@
     window.form.imagePreview.style.transform = 'scale(' + value / 100 + ')';
   }
 
-  function  initializeScale(elem, step, currentValue) {
+  exports.initializeScale = function(elem, step, currentValue, adjustSizeFunc) {
 
     function getSizeValue(elem) {
       return +elem.value.substring(0, elem.value.indexOf('%'));
@@ -22,12 +22,12 @@
 
       if (elem === imageSizeInc && currentSizeValue <= (100-step)) {
         currentSizeValue += step;
-        applySizeValue(currentSizeValue);
+        adjustSizeFunc(currentSizeValue);
       }
 
       if (elem === imageSizeDec && currentSizeValue > step) {
         currentSizeValue -= step;
-        applySizeValue(currentSizeValue);
+        adjustSizeFunc(currentSizeValue);
       }
     }
 
@@ -36,6 +36,6 @@
     })
   }
 
-  initializeScale(imageSizeInc, 25, imageSizeValue);
-  initializeScale(imageSizeDec, 25, imageSizeValue);
-})()
+  window.initializeScale.initializeScale(imageSizeInc, 25, imageSizeValue, applySizeValue);
+  window.initializeScale.initializeScale(imageSizeDec, 25, imageSizeValue, applySizeValue);
+})(this.initializeScale = {})
